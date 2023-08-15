@@ -146,6 +146,8 @@ int main(int argc, char **argv)
 		fprintf(stderr, "error: failed to initialize GLFW\n");
 		return 1;
 	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	GLFWwindow *window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, argv[0], NULL, NULL);
 	if (window == NULL) {
 		fprintf(stderr, "error: failed to create a window\n");
