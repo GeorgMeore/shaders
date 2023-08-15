@@ -37,63 +37,65 @@ char *readFile(const char *fname)
 	return text;
 }
 
-GLuint compileShader(const char *fname, GLenum type)
+GLuint compileShader(const char *text, GLenum type)
 {
-	char *text = readFile(fname);
-	if (!text) {
-		return 0;
-	}
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, (const GLchar **)&text, NULL);
 	glCompileShader(shader);
 	int compiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled) {
-		fprintf(stderr, "error: failed to compile a shader: %s\n", fname);
 		glDeleteShader(shader);
-		free(text);
 		return 0;
 	}
+	return shader;
+}
+
+GLuint compileShaderFile(const char *fname, GLenum type)
+{
+	char *text = readFile(fname);
+	if (!text) {
+		return 0;
+	}
+	GLuint shader = compileShader(text, type);
 	free(text);
 	return shader;
 }
 
 GLuint makeShaderProgram(const char *fShaderPath)
 {
-	GLuint fs = compileShader(fShaderPath, GL_FRAGMENT_SHADER);
+	GLuint vs = compileShader(
+		"#version 400\n"
+		"layout (location = 0) in vec3 pos;"
+		"void main() { gl_Position = vec4(pos, 1.0); }",
+		GL_VERTEX_SHADER
+	);
+	if (!vs) {
+		fprintf(stderr, "error: failed to compile the vertex shader\n");
+		return 0;
+	}
+	GLuint fs = compileShaderFile(fShaderPath, GL_FRAGMENT_SHADER);
 	if (!fs) {
+		fprintf(stderr, "error: failed to compile the fragment shader\n");
+		glDeleteShader(vs);
 		return 0;
 	}
 	GLuint prog = glCreateProgram();
+	glAttachShader(prog, vs);
 	glAttachShader(prog, fs);
 	glLinkProgram(prog);
 	int linked;
 	glGetProgramiv(prog, GL_LINK_STATUS, &linked);
 	if (!linked) {
 		fprintf(stderr, "error: failed to link the shader program\n");
-		glDeleteShader(fs);
 		glDeleteProgram(prog);
+		glDeleteShader(vs);
+		glDeleteShader(fs);
 		return 0;
 	}
+	glDeleteShader(vs);
 	glDeleteShader(fs);
 	return prog;
-}
-
-void onError(int error, const char* description)
-{
-	fprintf(stderr, "error: glfw: %s\n", description);
-}
-
-void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_Q) {
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
-}
-
-void onResize(GLFWwindow *window, int width, int height)
-{
-	glViewport(0, 0, width, height);
 }
 
 GLuint genFullScreenQuadVAO()
@@ -114,6 +116,23 @@ GLuint genFullScreenQuadVAO()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 	return vao;
+}
+
+void onError(int error, const char* description)
+{
+	fprintf(stderr, "error: glfw: %s\n", description);
+}
+
+void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_Q) {
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+}
+
+void onResize(GLFWwindow *window, int width, int height)
+{
+	glViewport(0, 0, width, height);
 }
 
 int main(int argc, char **argv)
