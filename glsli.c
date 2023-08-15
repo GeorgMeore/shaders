@@ -66,8 +66,8 @@ GLuint makeShaderProgram(const char *fShaderPath)
 {
 	GLuint vs = compileShader(
 		"#version 400\n"
-		"layout (location = 0) in vec3 pos;"
-		"void main() { gl_Position = vec4(pos, 1.0); }",
+		"layout (location = 0) in vec3 pos; out vec2 uv;"
+		"void main() { gl_Position = vec4(pos, 1.0); uv = pos.xy; }",
 		GL_VERTEX_SHADER
 	);
 	if (!vs) {
@@ -164,8 +164,20 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	GLint timeLocation = glGetUniformLocation(prog, "time");
+	GLint mouseLocation = glGetUniformLocation(prog, "mouse");
+	GLint screenLocation = glGetUniformLocation(prog, "screen");
 	GLuint quadVAO = genFullScreenQuadVAO();
 	while (!glfwWindowShouldClose(window)) {
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		if (screenLocation != -1) {
+			glUniform2f(screenLocation, width, height);
+		}
+		if (mouseLocation != -1) {
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			glUniform2f(mouseLocation, 2*x - (double)width, (double)height - 2*y);
+		}
 		if (timeLocation != -1) {
 			glUniform1f(timeLocation, glfwGetTime());
 		}
