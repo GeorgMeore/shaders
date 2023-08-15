@@ -86,9 +86,9 @@ GLuint makeShaderProgram(const char *vShaderPath, const char *fShaderPath)
 	glAttachShader(prog, vs);
 	glLinkProgram(prog);
 	int linked;
-	glGetShaderiv(prog, GL_COMPILE_STATUS, &linked);
+	glGetProgramiv(prog, GL_LINK_STATUS, &linked);
 	if (!linked) {
-		fprintf(stderr, "error: failed to compile a shader program\n");
+		fprintf(stderr, "error: failed to link a shader program\n");
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 		glDeleteProgram(prog);
