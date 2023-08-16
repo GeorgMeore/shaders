@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 		if (mouseLocation != -1) {
 			double x, y;
 			glfwGetCursorPos(window, &x, &y);
-			glUniform2f(mouseLocation, 2*x - (double)width, (double)height - 2*y);
+			glUniform2f(mouseLocation, 2*x/(double)width - 1, 1 - 2*y/(double)height);
 		}
 		if (timeLocation != -1) {
 			glUniform1f(timeLocation, glfwGetTime());

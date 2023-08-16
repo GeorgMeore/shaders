@@ -25,12 +25,12 @@ vec2 closestPoint(vec3 circ, vec4 rect) {
 }
 
 vec2 rescale(vec2 coords, vec2 scale) {
-	return ((coords+vec2(1.0))/2)*scale;
+	return ((coords+vec2(1.0))/2)*scale*(screen/scale);
 }
 
 void main() {
 	vec2 point = rescale(uv, vec2(1920, 1080));
-	vec3 circ = vec3(rescale(mouse/screen, vec2(1920, 1080)), 100.0);
+	vec3 circ = vec3(rescale(mouse, vec2(1920, 1080)), 100.0);
 	vec4 rect = vec4(500.0, 200.0, 400.0, 300.0);
 
 	if (isInsideCircle(circ, closestPoint(circ, rect))) {
