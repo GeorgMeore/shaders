@@ -37,6 +37,15 @@ char *readFile(const char *fname)
 	return text;
 }
 
+char *getShaderError(GLuint shader)
+{
+	int length;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+	char *buff = malloc(length);
+	glGetShaderInfoLog(shader, length, NULL, buff);
+	return buff;
+}
+
 GLuint compileShader(const char *text, GLenum type)
 {
 	GLuint shader = glCreateShader(type);
@@ -45,6 +54,9 @@ GLuint compileShader(const char *text, GLenum type)
 	int compiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled) {
+		char *errMessage = getShaderError(shader);
+		fprintf(stderr, "error: compillation failed: %s\n", errMessage);
+		free(errMessage);
 		glDeleteShader(shader);
 		return 0;
 	}
