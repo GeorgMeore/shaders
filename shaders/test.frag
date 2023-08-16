@@ -8,7 +8,7 @@ uniform vec2 mouse;
 uniform vec2 screen;
 
 void main() {
-	if (length(uv - (mouse/screen)) < 0.1) {
+	if (length(uv - mouse) < 0.1) {
 		fragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	} else {
 		fragColor = vec4(abs(sin(time)), 0.5f, 0.2f, 1.0f);
