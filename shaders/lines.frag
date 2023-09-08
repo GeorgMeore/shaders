@@ -21,16 +21,16 @@ void main() {
 	float lineWidth = .005;
 
 	fragColor = vec4(0.0);
-	if (uv.x < mouse.x && dist(topLeft, mouse, uv) <= lineWidth) {
+	if (uv.x < mouse.x && uv.y > mouse.y && dist(topLeft, mouse, uv) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x > mouse.x && dist(topRight, mouse, uv) <= lineWidth) {
+	if (uv.x > mouse.x && uv.y > mouse.y && dist(topRight, mouse, uv) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x < mouse.x && dist(botLeft, mouse, uv) <= lineWidth) {
+	if (uv.x < mouse.x && uv.y < mouse.y && dist(botLeft, mouse, uv) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x > mouse.x && dist(botRight, mouse, uv) <= lineWidth) {
+	if (uv.x > mouse.x && uv.y < mouse.y && dist(botRight, mouse, uv) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
 }
