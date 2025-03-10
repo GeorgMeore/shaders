@@ -12,25 +12,31 @@ float dist(vec2 start, vec2 end, vec2 point) {
 	return abs(dot(norm, point - start));
 }
 
+vec2 rescale(vec2 uvpoint) {
+	return uvpoint * vec2(screen.x/screen.y, 1.0);
+}
+
 void main() {
-	vec2 topLeft = vec2(-1.0, 1.0);
-	vec2 botLeft = vec2(-1.0, -1.0);
-	vec2 topRight = vec2(1.0, 1.0);
-	vec2 botRight = vec2(1.0, -1.0);
+	vec2 topLeft = rescale(vec2(-1.0, 1.0));
+	vec2 botLeft = rescale(vec2(-1.0, -1.0));
+	vec2 topRight = rescale(vec2(1.0, 1.0));
+	vec2 botRight = rescale(vec2(1.0, -1.0));
+	vec2 p = rescale(uv);
+	vec2 m = rescale(mouse);
 
 	float lineWidth = .005;
 
 	fragColor = vec4(0.0);
-	if (uv.x < mouse.x && uv.y > mouse.y && dist(topLeft, mouse, uv) <= lineWidth) {
+	if (dist(topLeft, m, p) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x > mouse.x && uv.y > mouse.y && dist(topRight, mouse, uv) <= lineWidth) {
+	if (dist(topRight, m, p) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x < mouse.x && uv.y < mouse.y && dist(botLeft, mouse, uv) <= lineWidth) {
+	if (dist(botLeft, m, p) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
-	if (uv.x > mouse.x && uv.y < mouse.y && dist(botRight, mouse, uv) <= lineWidth) {
+	if (dist(botRight, m, p) <= lineWidth) {
 		fragColor += vec4(1.0);
 	}
 }
